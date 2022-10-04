@@ -31,6 +31,30 @@ def generate_pass():
     pyperclip.copy(password)
 
 
+# ---------------------------- SEARCH FUNCTION ------------------------------- #
+def search():
+    website = website_text.get()
+
+    if len(website) == 0:
+        messagebox.showerror(title="Error", message="Website is Empty")
+    else:
+        try:
+            with open(file=DATA_FILE, mode="r", encoding='utf-8-sig') as data_file:
+                data = json.load(data_file)
+            if website in data.keys():
+                email_key = "email"
+                password_key = "password"
+                messagebox.showinfo(title="Info", message=f"Below are saved details:"
+                                                          f"\nEmail: {data[website][email_key]}"
+                                                          f"\nPassword: {data[website][password_key]}")
+            else:
+                raise KeyError
+        except FileNotFoundError:
+            messagebox.showerror(title="Info", message="No Data File Found.")
+        except KeyError:
+            messagebox.showinfo(title="Info", message=f"{website} password is not saved yet!")
+
+
 # ---------------------------- SAVE PASSWORD ------------------------------- #
 def save():
     website = website_text.get()
@@ -85,8 +109,8 @@ password_label = Label(text="Password:")
 password_label.grid(column=0, row=3)
 
 # Entries
-website_text = Entry(width=51)
-website_text.grid(column=1, row=1, columnspan=2)
+website_text = Entry(width=32)
+website_text.grid(column=1, row=1)
 website_text.focus()
 email_text = Entry(width=51)
 email_text.grid(column=1, row=2, columnspan=2)
@@ -99,5 +123,7 @@ generate_password_button = Button(text="Generate Password", command=generate_pas
 generate_password_button.grid(column=2, row=3)
 add_button = Button(text="Add", width=44, command=save)
 add_button.grid(column=1, row=4, columnspan=2)
+search_button = Button(text="Search", width=15, command=search)
+search_button.grid(column=2, row=1)
 
 window.mainloop()
